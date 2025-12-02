@@ -89,7 +89,7 @@ export default function Hero({ movie }: HeroProps) {
                                     }
                                 }}
                                 className="w-full h-full"
-                                iframeClassName="w-full h-full object-cover scale-[1.35] pointer-events-none"
+                                iframeClassName="w-full h-full object-cover scale-[3.5] md:scale-[1.35] pointer-events-none"
                                 onEnd={handleSkip} // Go back to image when video ends
                             />
                             {/* Overlay to prevent interaction with iframe */}
