@@ -3,7 +3,7 @@ import { Movie } from "/imports/api/types";
 import { useMovieContext } from "../context/MovieContext";
 import { useWatchLaterContext } from "../context/WatchLaterContext";
 import { motion, AnimatePresence } from "framer-motion";
-import WatchLaterModal from "./WatchLaterModal";
+import WatchLaterModal from "/imports/ui/components/WatchLaterModal";
 import YouTube from "react-youtube";
 
 interface HeroProps {
@@ -152,10 +152,10 @@ export default function Hero({ movie }: HeroProps) {
                     >
                         {/* Meta Tags */}
                         <div className={`flex items-center gap-3 transition-opacity duration-1000 ${showTrailer && !userSkipped ? 'opacity-60' : 'opacity-100'}`}>
-                            <span className="px-2 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-bold tracking-widest uppercase text-white rounded-sm">
+                            <span className="px-2 py-1 bg-[#D2FF00]/10 border border-[#D2FF00]/50 text-[10px] font-bold tracking-widest uppercase text-[#D2FF00] rounded-sm">
                                 Trending
                             </span>
-                            <span className="flex items-center gap-1 text-amber-400 text-sm font-medium">
+                            <span className="flex items-center gap-1 text-[#D2FF00] text-sm font-medium">
                                 ★ {movie.vote_average?.toFixed(1)}
                             </span>
                         </div>
@@ -174,13 +174,12 @@ export default function Hero({ movie }: HeroProps) {
                         <div className={`flex items-center gap-4 pt-4 transition-all duration-1000 ${showTrailer && !userSkipped ? 'opacity-80' : 'opacity-100'}`}>
                             <button
                                 onClick={() => openMovie(movie)}
-                                className="group relative px-8 py-4 bg-white text-black font-bold tracking-wide rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                                className="group relative px-8 py-4 bg-[#D2FF00] text-black font-black tracking-wide rounded-none overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(210,255,0,0.4)]"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                     WATCH NOW
                                 </span>
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-200 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
                             </button>
 
                             <button
@@ -196,14 +195,14 @@ export default function Hero({ movie }: HeroProps) {
                                         });
                                     }
                                 }}
-                                className={`px-8 py-4 backdrop-blur-sm border font-medium tracking-wide rounded-full transition-all flex items-center gap-2 ${isWatchLater
-                                    ? "bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700"
-                                    : "bg-white/5 border-white/10 text-white hover:bg-white/10"
+                                className={`px-8 py-4 backdrop-blur-md border font-bold tracking-wide rounded-none transition-all flex items-center gap-2 ${isWatchLater
+                                    ? "bg-zinc-800/80 border-zinc-600 text-white hover:bg-zinc-700 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                                    : "bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-[#D2FF00] hover:text-[#D2FF00] hover:shadow-[0_0_20px_rgba(210,255,0,0.2)]"
                                     }`}
                             >
                                 {isWatchLater ? (
                                     <>
-                                        <svg className="w-5 h-5 text-green-500 fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                                        <svg className="w-5 h-5 text-[#D2FF00] fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
                                         ADDED TO LIST
                                     </>
                                 ) : (

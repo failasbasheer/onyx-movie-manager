@@ -48,7 +48,7 @@ export default function ActorModal() {
                     {/* Close Button */}
                     <button
                         onClick={closeActor}
-                        className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all duration-300 group"
+                        className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-[#D2FF00] hover:text-black transition-all duration-300 group"
                     >
                         <svg className="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -84,7 +84,7 @@ export default function ActorModal() {
                                 </h2>
                                 {selectedActor.place_of_birth && (
                                     <div className="flex items-center gap-2">
-                                        <span className="px-3 py-1 text-xs font-bold bg-white/10 text-white border border-white/10 rounded-full uppercase tracking-wider">
+                                        <span className="px-3 py-1 text-xs font-bold bg-[#D2FF00]/10 text-[#D2FF00] border border-[#D2FF00]/20 rounded-none uppercase tracking-wider">
                                             {selectedActor.place_of_birth.split(',').pop()?.trim()} Actor
                                         </span>
                                     </div>

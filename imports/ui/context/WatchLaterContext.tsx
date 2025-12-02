@@ -1,8 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext } from "react";
+import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
+import { WatchLaterCollection } from "/imports/api/Collections";
 import { WatchLaterItem, Movie } from "/imports/api/types";
 
 interface WatchLaterContextType {
-    items: WatchLaterItem[];
+    watchLater: WatchLaterItem[];
     addToWatchLater: (movie: Movie, details: Omit<WatchLaterItem, "id" | "movieId" | "movieTitle" | "posterPath" | "addedAt">) => void;
     updateWatchLaterItem: (id: string, updates: Partial<WatchLaterItem>) => void;
     removeFromWatchLater: (id: string) => void;
@@ -12,51 +15,54 @@ interface WatchLaterContextType {
 const WatchLaterContext = createContext<WatchLaterContextType | undefined>(undefined);
 
 export const WatchLaterProvider = ({ children }: { children: React.ReactNode }) => {
-    const [items, setItems] = useState<WatchLaterItem[]>([]);
+    const userId = useTracker(() => Meteor.userId());
 
-    // Load from localStorage on mount
-    useEffect(() => {
-        const storedItems = localStorage.getItem("watchLater");
-        if (storedItems) {
-            try {
-                setItems(JSON.parse(storedItems));
-            } catch (e) {
-                console.error("Failed to parse watchLater items", e);
-            }
-        }
-    }, []);
-
-    // Save to localStorage whenever items change
-    useEffect(() => {
-        localStorage.setItem("watchLater", JSON.stringify(items));
-    }, [items]);
+    const { watchLater } = useTracker(() => {
+        Meteor.subscribe("watchLater");
+        return {
+            watchLater: WatchLaterCollection.find({}, { sort: { addedAt: -1 } }).fetch(),
+        };
+    });
 
     const addToWatchLater = (movie: Movie, details: Omit<WatchLaterItem, "id" | "movieId" | "movieTitle" | "posterPath" | "addedAt">) => {
-        const newItem: WatchLaterItem = {
-            id: crypto.randomUUID(),
+        if (!userId) {
+            alert("Please login to add to Watch Later");
+            return;
+        }
+
+        const item = {
             movieId: movie.id,
             movieTitle: movie.title,
             posterPath: movie.poster_path,
-            addedAt: Date.now(),
+            runtime: movie.runtime,
             ...details,
         };
-        setItems((prev) => [...prev, newItem]);
+
+        Meteor.call("watchLater.add", item, (err: Error) => {
+            if (err) console.error("Failed to add to watch later", err);
+        });
     };
 
     const updateWatchLaterItem = (id: string, updates: Partial<WatchLaterItem>) => {
-        setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+        if (!userId) return;
+        Meteor.call("watchLater.update", id, updates, (err: Error) => {
+            if (err) console.error("Failed to update watch later item", err);
+        });
     };
 
     const removeFromWatchLater = (id: string) => {
-        setItems((prev) => prev.filter((item) => item.id !== id));
+        if (!userId) return;
+        Meteor.call("watchLater.remove", id, (err: Error) => {
+            if (err) console.error("Failed to remove from watch later", err);
+        });
     };
 
     const getItemByMovieId = (movieId: number) => {
-        return items.find((item) => item.movieId === movieId);
+        return watchLater.find((item) => item.movieId === movieId);
     };
 
     return (
-        <WatchLaterContext.Provider value={{ items, addToWatchLater, updateWatchLaterItem, removeFromWatchLater, getItemByMovieId }}>
+        <WatchLaterContext.Provider value={{ watchLater, addToWatchLater, updateWatchLaterItem, removeFromWatchLater, getItemByMovieId }}>
             {children}
         </WatchLaterContext.Provider>
     );

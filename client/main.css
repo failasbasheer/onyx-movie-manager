@@ -16,11 +16,17 @@
   --font-serif: "Cinzel", serif;
 }
 
+html,
 body {
-  background-color: var(--color-dark);
-  color: var(--color-platinum);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+  background: #050505;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: #D2FF00;
+  color: black;
 }
 
 @layer utilities {

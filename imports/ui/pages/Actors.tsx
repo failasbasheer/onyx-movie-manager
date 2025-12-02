@@ -35,7 +35,7 @@ export default function Actors() {
         <div className="min-h-screen bg-black pt-24 pb-12 px-6">
             <div className="max-w-7xl mx-auto space-y-12">
                 <div className="space-y-2">
-                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-white">Actors</h1>
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">Actors</h1>
                     <p className="text-zinc-400">Discover stars from around the world.</p>
                 </div>
 

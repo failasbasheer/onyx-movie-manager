@@ -1,5 +1,7 @@
-// /imports/ui/context/MovieContext.tsx
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
+import { MovieFavoritesCollection } from "/imports/api/Collections";
 import { fetchTrailer } from "../services/api";
 import { Movie } from "/imports/api/types";
 
@@ -22,36 +24,33 @@ interface MovieContextType {
 const MovieContext = createContext<MovieContextType | undefined>(undefined);
 
 export const MovieProvider = ({ children }: { children: React.ReactNode }) => {
-    const [favorites, setFavorites] = useState<Movie[]>([]);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const userId = useTracker(() => Meteor.userId());
 
-    // Load favorites from localStorage on mount
-    useEffect(() => {
-        const storedFavorites = localStorage.getItem("favorites");
-        if (storedFavorites) {
-            try {
-                setFavorites(JSON.parse(storedFavorites));
-            } catch (e) {
-                console.error("Failed to parse favorites", e);
-            }
-        }
-    }, []);
-
-    // Save favorites to localStorage whenever they change
-    useEffect(() => {
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-    }, [favorites]);
+    const { favorites } = useTracker(() => {
+        Meteor.subscribe("movieFavorites");
+        const favoriteDocs = MovieFavoritesCollection.find({}, { sort: { addedAt: -1 } }).fetch();
+        return {
+            favorites: favoriteDocs.map(doc => doc.movie),
+        };
+    });
 
     const addToFavorites = (movie: Movie) => {
-        setFavorites((prev) => {
-            if (prev.some((m) => m.id === movie.id)) return prev;
-            return [...prev, movie];
+        if (!userId) {
+            alert("Please login to add to Favorites");
+            return;
+        }
+        Meteor.call("favorites.addMovie", movie, (err: Error) => {
+            if (err) console.error("Failed to add favorite", err);
         });
     };
 
     const removeFromFavorites = (id: number) => {
-        setFavorites((prev) => prev.filter((movie) => movie.id !== id));
+        if (!userId) return;
+        Meteor.call("favorites.removeMovie", id, (err: Error) => {
+            if (err) console.error("Failed to remove favorite", err);
+        });
     };
 
     const isFavorite = (id: number) => {

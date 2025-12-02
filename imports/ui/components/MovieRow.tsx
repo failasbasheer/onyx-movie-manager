@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import MovieCard from "./MovieCard";
 import { Movie } from "/imports/api/types";
-import { motion } from "framer-motion";
+
 
 interface MovieRowProps {
     title: string;
@@ -25,12 +25,12 @@ export default function MovieRow({ title, movies, isFavorite }: MovieRowProps) {
     if (!movies || movies.length === 0) return null;
 
     return (
-        <section 
-            className="mb-16 relative group/row pl-6 md:pl-16"
+        <section
+            className="mb-16 relative group/row pl-6 md:pl-16 hover:z-50 transition-all duration-300"
             onMouseEnter={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
         >
-            <h2 className="text-2xl md:text-3xl font-serif font-medium text-white mb-6 tracking-wide flex items-center gap-4">
+            <h2 className="text-2xl md:text-3xl font-serif font-medium text-white mb-2 tracking-wide flex items-center gap-4">
                 {title}
                 <div className="h-[1px] bg-white/10 flex-1 mr-16" />
             </h2>
@@ -48,7 +48,7 @@ export default function MovieRow({ title, movies, isFavorite }: MovieRowProps) {
                 {/* The Grid/Row */}
                 <div
                     ref={scrollRef}
-                    className="flex gap-4 overflow-x-auto no-scrollbar pb-8 scroll-smooth pr-16"
+                    className="flex gap-4 overflow-x-auto no-scrollbar py-8 scroll-smooth pr-16 -mt-4"
                 >
                     {movies.map((movie) => (
                         <div key={movie.id} className="min-w-[180px] md:min-w-[240px]">

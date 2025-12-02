@@ -1,3 +1,5 @@
+import { Meteor } from 'meteor/meteor';
+
 export interface Movie {
     id: number;
     title: string;
@@ -13,6 +15,7 @@ export interface Movie {
     popularity?: number;
     video?: boolean;
     adult?: boolean;
+    runtime?: number;
 }
 
 export interface TMDBResponse {
@@ -37,6 +40,7 @@ export interface WatchLaterItem {
     tags: string[];
     mood?: WatchLaterMood;
     addedAt: number;
+    runtime?: number;
 }
 
 export interface Actor {
@@ -45,4 +49,34 @@ export interface Actor {
     profile_path: string;
     known_for: Movie[];
     place_of_birth?: string;
+}
+
+export interface ExtendedUser extends Meteor.User {
+    profile?: {
+        name?: string;
+        avatar?: string; // Legacy URL
+        avatarConfig?: any; // react-nice-avatar config
+        preferences?: {
+            genres: number[];
+            language: string;
+            mood: string;
+            darkMode: boolean;
+        };
+    };
+}
+
+export interface UserInteraction {
+    _id?: string;
+    userId: string;
+    movieId: number;
+    movieTitle?: string;
+    posterPath?: string;
+    releaseDate?: string;
+    rating?: number; // 1-10
+    review?: string; // Max 150 chars
+    notes?: string; // Private watch diary
+    watchedAt?: number;
+    isWatched?: boolean;
+    createdAt?: number;
+    updatedAt: number;
 }

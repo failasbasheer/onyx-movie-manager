@@ -119,9 +119,9 @@ export default function Home() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeTab === tab
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-zinc-400 hover:bg-white/20 hover:text-white"
+                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${activeTab === tab
+                      ? "bg-[#D2FF00] text-black shadow-[0_0_15px_rgba(210,255,0,0.4)]"
+                      : "bg-white/10 text-zinc-400 hover:bg-white/20 hover:text-white"
                       } capitalize`}
                   >
                     {tab}
@@ -200,10 +200,7 @@ export default function Home() {
               />
             ))}
 
-            {/* Footer / Spacing Element */}
-            <div className="h-24 flex items-center justify-center text-zinc-800 text-sm font-medium tracking-widest uppercase">
-              Onyx • Curated Cinema
-            </div>
+
           </div>
         </>
       )}

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useWatchLaterContext } from "../context/WatchLaterContext";
 import { WatchLaterStatus, WatchLaterItem } from "/imports/api/types";
-import WatchLaterModal from "../components/WatchLaterModal";
+import WatchLaterModal from "/imports/ui/components/WatchLaterModal";
 import { Movie } from "/imports/api/types";
+import Footer from "../components/Footer";
 
 const STATUS_GROUPS: { status: WatchLaterStatus; label: string }[] = [
     { status: "To-Watch", label: "To Watch" },
@@ -14,7 +15,7 @@ const STATUS_GROUPS: { status: WatchLaterStatus; label: string }[] = [
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 export default function WatchLaterPage() {
-    const { items, removeFromWatchLater } = useWatchLaterContext();
+    const { watchLater: items, removeFromWatchLater } = useWatchLaterContext();
     const [editingItem, setEditingItem] = useState<WatchLaterItem | null>(null);
 
     // Helper to reconstruct a minimal Movie object for the modal
@@ -59,7 +60,7 @@ export default function WatchLaterPage() {
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             exit={{ opacity: 0, scale: 0.9 }}
-                                            className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden hover:border-white/20 transition-colors group"
+                                            className="bg-white/5 backdrop-blur-sm border border-white/5 rounded-none overflow-hidden hover:border-[#D2FF00] hover:shadow-[0_0_20px_rgba(210,255,0,0.2)] transition-all group"
                                         >
                                             <div className="flex h-48">
                                                 {/* Poster */}
@@ -70,9 +71,9 @@ export default function WatchLaterPage() {
                                                         className="w-full h-full object-cover"
                                                     />
                                                     <div className="absolute top-2 left-2">
-                                                        <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider border ${item.priority === 'High' ? 'bg-red-500/20 text-red-400 border-red-500/50' :
-                                                            item.priority === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50' :
-                                                                'bg-green-500/20 text-green-400 border-green-500/50'
+                                                        <span className={`text-[10px] font-bold px-2 py-1 rounded-none uppercase tracking-wider border shadow-[0_0_10px_rgba(0,0,0,0.5)] ${item.priority === 'High' ? 'bg-[#FF007A] text-white border-[#FF007A]' :
+                                                            item.priority === 'Medium' ? 'bg-[#D2FF00] text-black border-[#D2FF00]' :
+                                                                'bg-white text-black border-white'
                                                             }`}>
                                                             {item.priority}
                                                         </span>
@@ -82,13 +83,13 @@ export default function WatchLaterPage() {
                                                 {/* Content */}
                                                 <div className="flex-1 p-4 flex flex-col justify-between">
                                                     <div>
-                                                        <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2">
+                                                        <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2 text-white group-hover:text-[#D2FF00] transition-colors">
                                                             {item.movieTitle}
                                                         </h3>
 
                                                         {item.mood && (
                                                             <div className="mb-2">
-                                                                <span className="text-[10px] text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase">
+                                                                <span className="text-[10px] text-zinc-300 bg-white/10 border border-white/20 px-2 py-0.5 rounded-none uppercase">
                                                                     {item.mood}
                                                                 </span>
                                                             </div>
@@ -97,7 +98,7 @@ export default function WatchLaterPage() {
                                                         {item.tags.length > 0 && (
                                                             <div className="flex flex-wrap gap-1 mb-2">
                                                                 {item.tags.slice(0, 3).map(tag => (
-                                                                    <span key={tag} className="text-[10px] text-zinc-400 bg-white/5 px-1.5 py-0.5 rounded">
+                                                                    <span key={tag} className="text-[10px] text-zinc-400 bg-white/5 px-1.5 py-0.5 rounded-none">
                                                                         {tag}
                                                                     </span>
                                                                 ))}
@@ -119,7 +120,7 @@ export default function WatchLaterPage() {
                                                         </button>
                                                         <button
                                                             onClick={() => removeFromWatchLater(item.id)}
-                                                            className="text-zinc-600 hover:text-red-400 transition-colors"
+                                                            className="text-zinc-600 hover:text-[#FF007A] transition-colors"
                                                             title="Remove"
                                                         >
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +133,7 @@ export default function WatchLaterPage() {
 
                                             {item.reason && (
                                                 <div className="px-4 pb-4 pt-2">
-                                                    <p className="text-xs text-zinc-400 italic border-l-2 border-white/10 pl-3 line-clamp-2">
+                                                    <p className="text-xs text-zinc-400 italic border-l-2 border-[#D2FF00]/30 pl-3 line-clamp-2">
                                                         "{item.reason}"
                                                     </p>
                                                 </div>

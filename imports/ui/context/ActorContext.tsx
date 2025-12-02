@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
+import { ActorFavoritesCollection } from "/imports/api/Collections";
 import { Actor } from "/imports/api/types";
 
 interface ActorContextType {
@@ -10,45 +13,37 @@ interface ActorContextType {
     selectedActor: Actor | null;
     openActor: (actor: Actor) => void;
     closeActor: () => void;
-
-    // Search (can be synced with MovieContext or independent, but for now keeping it here for completeness)
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
 }
 
 const ActorContext = createContext<ActorContextType | undefined>(undefined);
 
 export const ActorProvider = ({ children }: { children: React.ReactNode }) => {
-    const [favorites, setFavorites] = useState<Actor[]>([]);
     const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const userId = useTracker(() => Meteor.userId());
 
-    // Load favorites from localStorage
-    useEffect(() => {
-        const storedFavorites = localStorage.getItem("actor_favorites");
-        if (storedFavorites) {
-            try {
-                setFavorites(JSON.parse(storedFavorites));
-            } catch (e) {
-                console.error("Failed to parse actor favorites", e);
-            }
-        }
-    }, []);
-
-    // Save favorites to localStorage
-    useEffect(() => {
-        localStorage.setItem("actor_favorites", JSON.stringify(favorites));
-    }, [favorites]);
+    const { favorites } = useTracker(() => {
+        Meteor.subscribe("actorFavorites");
+        const favoriteDocs = ActorFavoritesCollection.find({}, { sort: { addedAt: -1 } }).fetch();
+        return {
+            favorites: favoriteDocs.map(doc => doc.actor),
+        };
+    });
 
     const addToFavorites = (actor: Actor) => {
-        setFavorites((prev) => {
-            if (prev.some((a) => a.id === actor.id)) return prev;
-            return [...prev, actor];
+        if (!userId) {
+            alert("Please login to add to Favorites");
+            return;
+        }
+        Meteor.call("favorites.addActor", actor, (err: Error) => {
+            if (err) console.error("Failed to add favorite actor", err);
         });
     };
 
     const removeFromFavorites = (id: number) => {
-        setFavorites((prev) => prev.filter((actor) => actor.id !== id));
+        if (!userId) return;
+        Meteor.call("favorites.removeActor", id, (err: Error) => {
+            if (err) console.error("Failed to remove favorite actor", err);
+        });
     };
 
     const isFavorite = (id: number) => {
@@ -68,8 +63,6 @@ export const ActorProvider = ({ children }: { children: React.ReactNode }) => {
                 selectedActor,
                 openActor,
                 closeActor,
-                searchQuery,
-                setSearchQuery,
             }}
         >
             {children}
